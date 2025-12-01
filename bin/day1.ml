@@ -2,30 +2,11 @@ let file = "inputs/day1.in"
 let string_to_char_list s = s |> String.to_seq |> List.of_seq
 let char_list_to_int = List.fold_left (fun acc c -> acc * 10 + Char.code c - Char.code '0') 0
 
-let process_line (pointer : int) (zeros : int) (line : char list) : (int * int) =
-  match line with
-  | (dir :: rest) ->
-    (let number = char_list_to_int rest in
-      let pointer =
-        match dir with
-        | 'R' -> Advent.modulo (pointer + number) 100
-        | 'L' -> Advent.modulo (pointer - number) 100
-        | _ -> failwith "Invalid direction"
-      in
-      let zeros = if pointer = 0 then zeros + 1 else zeros in
-      (pointer, zeros))
-  | _ -> failwith "Invalid line"
+type mode =
+  | FinalPosition
+  | WithIntermediate
 
-let part1 () =
-  file
-  |> Advent.read_lines
-  |> List.map string_to_char_list
-  |> List.fold_left (fun acc line -> process_line (fst acc) (snd acc) line) (50, 0)
-  |> snd
-  |> string_of_int
-  |> print_endline
-
-let process_line2 (pointer : int) (zeros : int) (line : char list) : (int * int) =
+let process_line (pointer : int) (zeros : int) (line : char list) (mode : mode) : (int * int) =
   match line with
   | (dir :: rest) ->
     (let number = char_list_to_int rest in
@@ -36,19 +17,25 @@ let process_line2 (pointer : int) (zeros : int) (line : char list) : (int * int)
         | _ -> failwith "Invalid direction"
       in
       let new_pointer = Advent.modulo raw_value 100 in
-      let passed_zeros = if raw_value = 0 then 1 else if raw_value > 0 then raw_value / 100 else if pointer = 0 then ((abs raw_value) / 100) else ((abs raw_value) / 100) + 1  in
-      (new_pointer, zeros + passed_zeros))
+      let new_zeros = match (mode, raw_value, new_pointer, pointer) with
+        | (FinalPosition, _, 0, _) -> 1
+        | (FinalPosition, _, _, _) -> 0
+        | (WithIntermediate, 0, _, _) -> 1
+        | (WithIntermediate, _, _, _) when raw_value > 0 -> raw_value / 100
+        | (WithIntermediate, _, _, 0) -> (abs raw_value) / 100
+        | (WithIntermediate, _, _, _) -> (abs raw_value) / 100 + 1 in
+      (new_pointer, zeros + new_zeros))
   | _ -> failwith "Invalid line"
 
-let part2 () =
+let process (mode : mode) : unit =
   file
   |> Advent.read_lines
   |> List.map string_to_char_list
-  |> List.fold_left (fun acc line -> process_line2 (fst acc) (snd acc) line) (50, 0)
+  |> List.fold_left (fun acc line -> process_line (fst acc) (snd acc) line mode) (50, 0)
   |> snd
   |> string_of_int
   |> print_endline
 
 let run () =
-  part1 ();
-  part2 ()
+  process FinalPosition;
+  process WithIntermediate

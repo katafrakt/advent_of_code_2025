@@ -5,22 +5,18 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github katafrakt/advent_of_code_2025))
 
-(authors "Author Name")
-
-(maintainers "Maintainer Name")
+(authors "Pawe\197\130 \197\154wi\196\133tkowski")
 
 (license LICENSE)
 
-(documentation https://url/to/documentation)
-
 (package
  (name aoc2025)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "Solutions for 2025 edition of Advent of Code")
+ (description "Solutions for 2025 edition of Advent of Code")
  (depends ocaml dune)
  (tags
-  (topics "to describe" your project)))
+  (topics "advent of code")))
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

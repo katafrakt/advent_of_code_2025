@@ -2,10 +2,7 @@ module type Day = sig
   val run : unit -> unit
 end
 
-let days : (module Day) Array.t =
-  [|
-    (module Day1);
-  |]
+let days : (module Day) Array.t = [| (module Day1); (module Day2) |]
 
 let () =
   let argv = Sys.argv in

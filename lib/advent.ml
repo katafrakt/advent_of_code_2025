@@ -5,5 +5,4 @@ let read_lines file =
 
 let modulo x y =
   let result = x mod y in
-  if result >= 0 then result
-  else result + y
+  if result >= 0 then result else result + y
